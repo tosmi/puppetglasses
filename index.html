@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Puppetglasses</title>
+    <link rel="stylesheet" href="libs/jquery-ui/jquery-ui.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="lib/DataTables-1.10.5/media/css/jquery.dataTables.css"> -->
+    <link rel="stylesheet" href="lib/DataTables/css/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="puppetglasses.css">
+  </head>
+  <body>
+    <div class="container">
+    <div class="form-group">
+      <div class="row">
+	<div class="col-md-8  col-md-offset-1">
+	  <input class="form-control input" id="hostname" placeholder="Enter a hostname">
+	</div>
+	<div class="col-md-2">
+	  <button class="btn <b></b>tn-primary" type="submit" id="search">List resources</button>
+	</div>
+      </div>
+    </div>
+    <div id="resources">
+      <hr/>
+      <table class="table table-hover" id="resource_table">
+	<thead>
+	  <tr>
+	    <th>Type</th>
+	    <th>Title</th>
+	    <th>Parameters</th>
+	  </tr>
+	</thead>
+	<tbody>
+	</tbody>
+      </table>
+
+    </div>
+    </div>
+
+    <!-- javascript includes -->
+    <script type="text/javascript" src="dist/js/_deps.js"></script>
+    <script type="text/javascript" src="dist/js/puppetviewer.js"></script>
+  </body>
+</html>
