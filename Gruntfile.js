@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         dest: 'dist/js/<%= pkg.name %>.js'
       },
       distcss: {
-        src: ['src/css/<%= pkg.name %>.css'],
+        src: ['src/css/<%= pkg.name %>.css',],
         dest: 'dist/css/<%= pkg.name %>.css'
       },
     },
@@ -42,7 +42,13 @@ module.exports = function(grunt) {
     bower_concat: {
       all: {
 	dest: 'dist/js/_deps.js',
-	cssDest: 'dist/css/_deps.css'
+	cssDest: 'dist/css/_deps.css',
+	dependencies: {
+	  'dataTables.bootstrap': 'datatables'
+	},
+	mainFiles: {
+	  'jquery-ui': [ 'themes/base/jquery-ui.min.css', 'jquery-ui.min.js']
+	}
       }
     },
     qunit: {
