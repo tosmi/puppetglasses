@@ -5,11 +5,44 @@ window.puppetglassesConfig = {};
 
 puppetglassesConfig.puppetdb_url="http://localhost:2080/v3";
 
+var PuppetglassesStatistics = (function() {
+
+  function PuppetglassesStatistics() {
+    this.total_nodes = 0;
+    this.active_nodes = 0;
+    this.stale_nodes = 0;
+
+    this.collect = function () {
+      var uri  = puppetglassesConfig.puppetdb_url +'/nodes';
+      var self = this;
+      $.get(uri)
+	.done(function(data) { self.calculateStatistics(data); });
+    };
+
+    this.calculateStatistics = function(data) {
+      this.total_nodes = data.length;
+      this.displayStatistics();
+    };
+
+    this.displayStatistics = function() {
+      $('#total_nodes').text(this.total_nodes);
+    };
+  }
+
+  PuppetglassesStatistics.prototype.run = function() {
+    this.collect();
+
+  };
+
+  return PuppetglassesStatistics;
+}());
+
 var Puppetglasses = (function() {
   'use strict';
 
   function Puppetglasses() {
     this.config = puppetglassesConfig;
+    this.statistics = new PuppetglassesStatistics();
   }
 
   Puppetglasses.prototype.findNodes = function(request,response) {
@@ -44,6 +77,14 @@ var Puppetglasses = (function() {
       this.setAttribute('title', parameters);
     });
     resourcetable.column(2).visible(false);
+  };
+
+  Puppetglasses.prototype.showStatistics = function() {
+    var self = this;
+    $("#puppetglasses_resources").hide();
+    $("#puppetglasses_statistics").show(
+      function() { self.statistics.run(); }
+    );
   };
 
   function parseNodes(data, response) {
@@ -94,6 +135,11 @@ $(document).ready(function () {
     source: function(request,response) { puppetglasses.findNodes(request, response); }
   });
   $("#search").click( function() { puppetglasses.findResources(); });
+
+  $("#navbar_statistics").click( function() { puppetglasses.showStatistics(); });
+  $("#navbar_resources").click( function() { $("#puppetglasses_resources").show(); $("#puppetglasses_statistics").hide(); });
+
   $("#resources").hide();
+  $("#puppetglasses_statistics").hide();
   $('#resource_table').on('draw.dt', function() { puppetglasses.addTooltips(); });
 });
