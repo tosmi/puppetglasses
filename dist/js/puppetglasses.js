@@ -5,15 +5,46 @@ window.puppetglassesConfig = {};
 
 puppetglassesConfig.puppetdb_url="http://localhost:2080/v3";
 
-(function () {
+var Puppetglasses = (function() {
   'use strict';
 
-  function findNodes(request, response) {
-    var uri = puppetglassesConfig.puppetdb_url + '/nodes?query=["~","name","' + request.term +'"]';
+  function Puppetglasses() {
+    this.config = puppetglassesConfig;
+  }
+
+  Puppetglasses.prototype.findNodes = function(request,response) {
+    var uri = this.config.puppetdb_url + '/nodes?query=["~","name","' + request.term +'"]';
 
     $.getJSON(uri)
       .done(function(data) { parseNodes(data, response); });
-  }
+  };
+
+  Puppetglasses.prototype.findResources = function() {
+    var node = $('#hostname').val();
+    var uri  = this.config.puppetdb_url +'/nodes/' + node + '/resources';
+
+    var self = this;
+    $.get(uri)
+      .done(function(data) { self.displayResources(data); });
+  };
+
+  Puppetglasses.prototype.displayResources = function(resources) {
+    resourcetable.clear();
+    resources.map(addRow);
+    resourcetable.search('').columns().search('').draw();
+    this.addTooltips();
+    $("#resources").show();
+  };
+
+  Puppetglasses.prototype.addTooltips = function() {
+    resourcetable.column(2).visible(true);
+    $('#resource_table tbody tr').each( function() {
+      var td = $('td',this)[2];
+      var parameters = $(td).text();
+      this.setAttribute('title', parameters);
+    });
+    resourcetable.column(2).visible(false);
+  };
 
   function parseNodes(data, response) {
     var nodes = [];
@@ -23,36 +54,12 @@ puppetglassesConfig.puppetdb_url="http://localhost:2080/v3";
     response(nodes);
   }
 
-  function addTooltips() {
-    resourcetable.column(2).visible(true);
-    $('#resource_table tbody tr').each( function() {
-      var td = $('td',this)[2];
-      var parameters = $(td).text();
-      this.setAttribute('title', parameters);
-    });
-    resourcetable.column(2).visible(false);
-  }
-
-  function findResources() {
-    var node = $('#hostname').val();
-    var uri = puppetglassesConfig.puppetdb_url +'/nodes/' + node + '/resources';
-
-    $.get(uri)
-      .done(displayResources);
-  }
-
-  function displayResources(resources) {
-    resourcetable.clear();
-    for(var i = 0; i < resources.length; i++) {
-      resourcetable.row.add([
-        resources[i].type,
-        resources[i].title,
-        paramToString(resources[i].parameters)
-      ]);
-    }
-    resourcetable.search('').columns().search('').draw();
-    addTooltips();
-    $("#resources").show();
+  function addRow(resource) {
+    resourcetable.row.add([
+      resource.type,
+      resource.title,
+      paramToString(resource.parameters)
+    ]);
   }
 
   function paramToString(param) {
@@ -77,11 +84,16 @@ puppetglassesConfig.puppetdb_url="http://localhost:2080/v3";
     ]
   });
 
-  $("#hostname").autocomplete({
-    source: findNodes
-  });
-  $("#search").click(findResources);
-  $("#resources").hide();
-  $('#resource_table').on('draw.dt', addTooltips);
-
+  return Puppetglasses;
 }());
+
+$(document).ready(function () {
+  var puppetglasses = new Puppetglasses();
+
+  $("#hostname").autocomplete({
+    source: function(request,response) { puppetglasses.findNodes(request, response); }
+  });
+  $("#search").click( function() { puppetglasses.findResources(); });
+  $("#resources").hide();
+  $('#resource_table').on('draw.dt', function() { puppetglasses.addTooltips(); });
+});
