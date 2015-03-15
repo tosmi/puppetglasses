@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 	  archive: 'puppetglasses-<%= pkg.version %>.zip'
 	},
 	files : [
-	  { src: ['dist/**'], dest: 'puppetglasses-<%= pkg.version %>/'}
+	  { src: ['index.html', 'dist/**'], dest: 'puppetglasses-<%= pkg.version %>/'}
 	]
       }
     },
