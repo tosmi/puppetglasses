@@ -11,12 +11,22 @@ var PuppetglassesStatistics = (function() {
     this.total_nodes = 0;
     this.active_nodes = 0;
     this.stale_nodes = 0;
+    this.num_resources = 0;
 
     this.collect = function () {
       var uri  = puppetglassesConfig.puppetdb_url +'/nodes';
       var self = this;
       $.get(uri)
 	.done(function(data) { self.calculateStatistics(data); });
+
+      uri = puppetglassesConfig.puppetdb_url + '/metrics/mbean/' + encodeURIComponent('com.puppetlabs.puppetdb.query.population:type=default,name=num-resources');
+      $.get(uri)
+	.done(function(data) { self.numResources(data); });
+    };
+
+    this.numResources = function(data) {
+      this.num_resources = data.Value;
+      this.displayStatistics();
     };
 
     this.calculateStatistics = function(data) {
@@ -26,6 +36,7 @@ var PuppetglassesStatistics = (function() {
 
     this.displayStatistics = function() {
       $('#total_nodes').text(this.total_nodes);
+      $('#num_resources').text(this.num_resources);
     };
   }
 
@@ -81,10 +92,19 @@ var Puppetglasses = (function() {
 
   Puppetglasses.prototype.showStatistics = function() {
     var self = this;
+    $('#navbar_statistics').toggleClass('active');
+    $('#navbar_resources').toggleClass('active');
     $("#puppetglasses_resources").hide();
-    $("#puppetglasses_statistics").show(
+    $("#puppetglasses_statistics").show(0,
       function() { self.statistics.run(); }
     );
+  };
+
+  Puppetglasses.prototype.showResources = function() {
+    $('#navbar_statistics').toggleClass('active');
+    $('#navbar_resources').toggleClass('active');
+    $("#puppetglasses_resources").show();
+    $("#puppetglasses_statistics").hide();
   };
 
   function parseNodes(data, response) {
@@ -137,7 +157,7 @@ $(document).ready(function () {
   $("#search").click( function() { puppetglasses.findResources(); });
 
   $("#navbar_statistics").click( function() { puppetglasses.showStatistics(); });
-  $("#navbar_resources").click( function() { $("#puppetglasses_resources").show(); $("#puppetglasses_statistics").hide(); });
+  $("#navbar_resources").click( function() { puppetglasses.showResources(); });
 
   $("#resources").hide();
   $("#puppetglasses_statistics").hide();

@@ -42,10 +42,19 @@ var Puppetglasses = (function() {
 
   Puppetglasses.prototype.showStatistics = function() {
     var self = this;
+    $('#navbar_statistics').toggleClass('active');
+    $('#navbar_resources').toggleClass('active');
     $("#puppetglasses_resources").hide();
-    $("#puppetglasses_statistics").show(
+    $("#puppetglasses_statistics").show(0,
       function() { self.statistics.run(); }
     );
+  };
+
+  Puppetglasses.prototype.showResources = function() {
+    $('#navbar_statistics').toggleClass('active');
+    $('#navbar_resources').toggleClass('active');
+    $("#puppetglasses_resources").show();
+    $("#puppetglasses_statistics").hide();
   };
 
   function parseNodes(data, response) {
@@ -98,7 +107,7 @@ $(document).ready(function () {
   $("#search").click( function() { puppetglasses.findResources(); });
 
   $("#navbar_statistics").click( function() { puppetglasses.showStatistics(); });
-  $("#navbar_resources").click( function() { $("#puppetglasses_resources").show(); $("#puppetglasses_statistics").hide(); });
+  $("#navbar_resources").click( function() { puppetglasses.showResources(); });
 
   $("#resources").hide();
   $("#puppetglasses_statistics").hide();
