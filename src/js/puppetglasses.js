@@ -1,3 +1,4 @@
+/* globals PuppetglassesNodes: false, PuppetglassesStatistics: false */
 var Puppetglasses = (function() {
   'use strict';
 

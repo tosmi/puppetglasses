@@ -1,3 +1,5 @@
+/* exported PuppetglassesNodes */
+
 var PuppetglassesNodes = (function() {
   function PuppetglassesNodes() {
     this.nodestable = $('#nodes_table').DataTable({
@@ -17,7 +19,7 @@ var PuppetglassesNodes = (function() {
 
     this.nodeIsActive = function(last_catalog_update) {
       var tnow = new Date();
-      return (tnow - last_catalog_update) > (1000 * 60* puppetglassesConfig.puppet_run_interval_minutes);
+      return (tnow - last_catalog_update) < (1000 * 60* puppetglassesConfig.puppet_run_interval_minutes);
     };
 
     this.displayNodes = function(data, active){

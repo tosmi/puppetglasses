@@ -1,3 +1,6 @@
+/* globals Chart: false */
+/* exported PuppetglassesStatistics */
+
 var PuppetglassesStatistics = (function() {
   var bean = 'com.puppetlabs.puppetdb.query.population:type=default,name=';
 
@@ -36,7 +39,7 @@ var PuppetglassesStatistics = (function() {
       for(var node in data) {
 	var t1 = new Date();
 	var t2 = new Date(data[node].catalog_timestamp);
-	if( (t1 - t2) > (1000*60*60) ) {
+	if( (t1 - t2) >= (1000*60*60) ) {
 	  metrics["stale-nodes"].value++;
 	}
 	else {
