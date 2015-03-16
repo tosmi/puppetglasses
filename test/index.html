@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Puppetglasses</title>
+    <link rel="stylesheet" href="dist/css/_deps.css">
+    <link rel="stylesheet" href="dist/css/puppetglasses.css">
+    <meta charset="utf-8">
+    <title>Puppetglasses Test Suite</title>
+    <!-- Load local QUnit. -->
+    <link rel="stylesheet" href="../libs/qunit/qunit.css" media="screen">
+    <script src="../libs/qunit/qunit.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-default">
+	<div class="container-fluid">
+	  <div class="navbar-header">
+	    <a class="navbar-brand" href="#">Puppetglasses</a>
+	  </div>
+	  <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+	      <li class="active" id="navbar_resources"><a href="#">List Resources</a></li>
+	      <li class="dropdown">
+		<a href="#" id="navbar_nodes" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Nodes<span class="caret"></span></a>
+		<ul class="dropdown-menu" role="menu">
+		  <li id="navbar_active_nodes"><a href="#">Active nodes</a></li>
+		  <li id="navbar_stale_nodes"><a href="#">Stale nodes</a></li>
+		</ul>
+              </li>
+	      <li id="navbar_statistics"><a href="#">Statistics</a></li>
+	    </ul>
+	  </div>
+	</div>
+      </nav>
+
+      <div id="puppetglasses_resources">
+	<div class="form-group">
+	  <div class="row">
+	    <div class="col-md-8  col-md-offset-1">
+	      <input class="form-control input" id="hostname" placeholder="Enter a hostname">
+	    </div>
+	    <div class="col-md-2">
+	      <button class="btn <b></b>tn-primary" type="submit" id="search">List resources</button>
+	    </div>
+	  </div>
+	</div>
+	<div id="resources">
+	  <hr/>
+	  <table class="table table-hover" id="resource_table">
+	    <thead>
+	      <tr>
+		<th>Type</th>
+		<th>Title</th>
+		<th>Parameters</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
+	  </table>
+	</div>
+      </div>
+
+      <div id="puppetglasses_statistics">
+	<div class="container col-md-offset-1">
+	  <div class="container col-md-offset-4">
+	    <small>Active/Stale Nodes</small></br>
+	    <canvas id="node_chart" width="150" height="150"></canvas>
+	  </div>
+	  <div class="col-md-8 col-md-offset-1">
+	    <table class="table table-striped" id="statistics_table">
+	      <thead>
+		<tr>
+		  <th>Metric</th>
+		  <th>Value</th>
+		</tr>
+	      </thead>
+	      <tbody>
+	      </tbody>
+	    </table>
+	  </div>
+	</div>
+      </div>
+
+      <div id="puppetglasses_nodes">
+	<div id="nodes">
+	  <table class="table table-striped" id="nodes_table">
+	    <thead>
+	      <tr>
+		<td>Node</td>
+		<td>Last catalog update</td>
+		<td>Last fact update</td>
+		<td>active</td>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
+	  </table>
+	</div>
+      </div>
+
+    </div>
+    <!-- javascript includes -->
+    <script type="text/javascript" src="dist/js/_deps.js"></script>
+    <script type="text/javascript" src="dist/js/puppetglasses.js"></script>
+    <script src="puppetglasses_test.js"></script>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">
+  </body>
+</html>
