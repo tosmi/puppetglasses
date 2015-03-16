@@ -4,7 +4,9 @@
 window.puppetglassesConfig = {};
 
 puppetglassesConfig.puppetdb_url="http://localhost:2080/v3";
-puppetglassesConfig.puppetdb_run_interval_minutes=30;
+puppetglassesConfig.puppet_run_interval_minutes=30;
+
+/* exported PuppetglassesStatistics */
 
 var PuppetglassesStatistics = (function() {
   var bean = 'com.puppetlabs.puppetdb.query.population:type=default,name=';
@@ -44,7 +46,7 @@ var PuppetglassesStatistics = (function() {
       for(var node in data) {
 	var t1 = new Date();
 	var t2 = new Date(data[node].catalog_timestamp);
-	if( (t1 - t2) > (1000*60*60) ) {
+	if( (t1 - t2) >= (1000*60*60) ) {
 	  metrics["stale-nodes"].value++;
 	}
 	else {
@@ -160,7 +162,7 @@ var PuppetglassesNodes = (function() {
 
     this.nodeIsActive = function(last_catalog_update) {
       var tnow = new Date();
-      return (tnow - last_catalog_update) > (1000 * 60* puppetglassesConfig.puppet_run_interval_minutes);
+      return (tnow - last_catalog_update) < (1000 * 60* puppetglassesConfig.puppet_run_interval_minutes);
     };
 
     this.displayNodes = function(data, active){
