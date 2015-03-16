@@ -42,8 +42,8 @@ var Puppetglasses = (function() {
 
   Puppetglasses.prototype.showStatistics = function() {
     var self = this;
-    $('#navbar_statistics').toggleClass('active');
-    $('#navbar_resources').toggleClass('active');
+    $('#navbar_statistics').addClass('active');
+    $('#navbar_resources').removeClass('active');
     $("#puppetglasses_resources").hide();
     $("#puppetglasses_statistics").show(0,
       function() { self.statistics.run(); }
@@ -51,8 +51,8 @@ var Puppetglasses = (function() {
   };
 
   Puppetglasses.prototype.showResources = function() {
-    $('#navbar_statistics').toggleClass('active');
-    $('#navbar_resources').toggleClass('active');
+    $('#navbar_statistics').removeClass('active');
+    $('#navbar_resources').addClass('active');
     $("#puppetglasses_resources").show();
     $("#puppetglasses_statistics").hide();
   };

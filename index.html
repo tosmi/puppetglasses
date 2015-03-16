@@ -49,19 +49,20 @@
       </div>
 
       <div id="puppetglasses_statistics">
-	<div class="row">
-	  <div class="col-md-4 col-md-offset-2 text-right">
-	    <h5>Total number of nodes:</h5>
+	<div class="container col-md-offset-1">
+	  <div class="container col-md-offset-4">
+	    <canvas id="node_chart" width="150" height="150"></canvas>
 	  </div>
-	  <div class="col-md-2">
-	    <h5><span id="total_nodes"/></h5>
-	  </div>
-	  <div class="col-md-4 col-md-offset-2 text-right">
-	    <h5>Number of resources:</h5>
-	  </div>
-	  <div class="col-md-2">
-	    <h5><span id="num_resources"/></h5>
-	  </div>
+	  <table class="table table-striped table-nonfluid" id="statistics_table">
+	    <thead>
+	      <tr>
+		<th class="col-md-4">Metric</th>
+		<th class="col-md-2">Value</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    </tbody>
+	  </table>
 	</div>
       </div>
 

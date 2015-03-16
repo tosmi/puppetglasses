@@ -20,6 +20,7 @@
     "bootstrap": "~3.3.2",
     "jquery-ui": "~1.11.4",
     "datatables": "~1.10.5",
-    "dataTables.bootstrap": "http://cdn.datatables.net/plug-ins/f2c75b7247b/integration/bootstrap/3/dataTables.bootstrap.css"
+    "dataTables.bootstrap": "http://cdn.datatables.net/plug-ins/f2c75b7247b/integration/bootstrap/3/dataTables.bootstrap.css",
+    "Chart.js": "~1.0.2"
   }
 }
