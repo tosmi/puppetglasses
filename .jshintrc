@@ -11,5 +11,9 @@
   "boss": true,
   "eqnull": true,
   "node": true,
-  "jquery": true
+  "jquery": true,
+  "browser": true,
+  "globals": {
+    "PuppetglassesNodes": true
+  }
 }
