@@ -94,9 +94,17 @@ module.exports = function(grunt) {
         tasks: ['jshint:test', 'qunit']
       },
     },
+    copy: {
+      main: {
+	files: [
+	  { expand: true, flatten: true, src: ['bower_components/datatables/media/images/*'], dest: 'dist/images/' }
+	]
+      }
+    }
   });
 
   // These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -107,6 +115,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-bower-concat');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'bower_concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'bower_concat', 'copy', 'uglify']);
 
 };
