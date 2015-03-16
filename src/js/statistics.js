@@ -71,7 +71,7 @@ var PuppetglassesStatistics = (function() {
       ];
 
       var ctx = $("#node_chart").get(0).getContext("2d");
-      var nodeChart = new Chart(ctx).Doughnut(data);
+      new Chart(ctx).Doughnut(data);
     };
 
     this.updateNodeMetrics = function () {
@@ -84,12 +84,14 @@ var PuppetglassesStatistics = (function() {
 	});
     };
 
-    this.updateMetric = function(metric) {
+    this.updateMetric = function(metric, multiply) {
+      multiply = typeof multiply !== 'undefined' ? multiply : 1;
+
       var self = this;
       var uri = puppetglassesConfig.puppetdb_url + '/metrics/mbean/' + encodeURIComponent(bean + metric);
       $.get(uri)
 	.done(function(data) {
-	  metrics[metric].value = data.Value;
+	  metrics[metric].value = Math.floor(data.Value * multiply);
 	  self.displayStatistics();
 	});
     };
@@ -118,7 +120,7 @@ var PuppetglassesStatistics = (function() {
 
       this.updateMetric('num-resources');
       this.updateMetric('avg-resources-per-node');
-      this.updateMetric('pct-resource-dupes');
+      this.updateMetric('pct-resource-dupes', 100);
     };
   }
 

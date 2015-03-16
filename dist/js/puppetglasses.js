@@ -4,6 +4,7 @@
 window.puppetglassesConfig = {};
 
 puppetglassesConfig.puppetdb_url="http://localhost:2080/v3";
+puppetglassesConfig.puppetdb_run_interval_minutes=30;
 
 var PuppetglassesStatistics = (function() {
   var bean = 'com.puppetlabs.puppetdb.query.population:type=default,name=';
@@ -78,7 +79,7 @@ var PuppetglassesStatistics = (function() {
       ];
 
       var ctx = $("#node_chart").get(0).getContext("2d");
-      var nodeChart = new Chart(ctx).Doughnut(data);
+      new Chart(ctx).Doughnut(data);
     };
 
     this.updateNodeMetrics = function () {
@@ -91,12 +92,14 @@ var PuppetglassesStatistics = (function() {
 	});
     };
 
-    this.updateMetric = function(metric) {
+    this.updateMetric = function(metric, multiply) {
+      multiply = typeof multiply !== 'undefined' ? multiply : 1;
+
       var self = this;
       var uri = puppetglassesConfig.puppetdb_url + '/metrics/mbean/' + encodeURIComponent(bean + metric);
       $.get(uri)
 	.done(function(data) {
-	  metrics[metric].value = data.Value;
+	  metrics[metric].value = Math.floor(data.Value * multiply);
 	  self.displayStatistics();
 	});
     };
@@ -108,7 +111,7 @@ var PuppetglassesStatistics = (function() {
 
       for(var metric in metrics) {
 	var row = '<tr><td>' + metrics[metric].desc + '</td>';
-	row    += '<td class="col-md-1" id="' + metric + '">' + metrics[metric].value + '</td></tr>';
+	row    += '<td id="' + metric + '">' + metrics[metric].value + '</td></tr>';
 	$('#statistics_table tbody').append(row);
       }
       this.initMetricsTableDone = true;
@@ -125,7 +128,7 @@ var PuppetglassesStatistics = (function() {
 
       this.updateMetric('num-resources');
       this.updateMetric('avg-resources-per-node');
-      this.updateMetric('pct-resource-dupes');
+      this.updateMetric('pct-resource-dupes', 100);
     };
   }
 
@@ -138,12 +141,67 @@ var PuppetglassesStatistics = (function() {
   return PuppetglassesStatistics;
 }());
 
+var PuppetglassesNodes = (function() {
+  function PuppetglassesNodes() {
+    this.nodestable = $('#nodes_table').DataTable({
+      "search": {
+        "caseInsensitive": false
+      }
+    });
+
+    this.addRow = function(node, data) {
+        this.nodestable.row.add([
+          data[node].name,
+          data[node].catalog_timestamp,
+          data[node].facts_timestamp,
+          data[node].deactivated === 'undefined' ? false : true,
+        ]);
+    };
+
+    this.nodeIsActive = function(last_catalog_update) {
+      var tnow = new Date();
+      return (tnow - last_catalog_update) > (1000 * 60* puppetglassesConfig.puppet_run_interval_minutes);
+    };
+
+    this.displayNodes = function(data, active){
+      this.nodestable.clear();
+
+      for(var node in data) {
+        var node_active = this.nodeIsActive(new Date(data[node].catalog_timestamp));
+        if (active && node_active) {
+          this.addRow(node,data);
+        }
+        else if (!active && !node_active) {
+          this.addRow(node,data);
+        }
+      }
+      this.nodestable.search('').columns().search('').draw();
+    };
+
+    this.showNodes = function(active) {
+      var self = this;
+      $.get(puppetglassesConfig.puppetdb_url + '/nodes')
+        .done(function(data) {
+          self.displayNodes(data, active);
+        });
+    };
+  }
+
+
+  PuppetglassesNodes.prototype.run = function(active) {
+      this.showNodes(active);
+  };
+
+  return PuppetglassesNodes;
+}());
+
 var Puppetglasses = (function() {
   'use strict';
 
   function Puppetglasses() {
     this.config = puppetglassesConfig;
     this.statistics = new PuppetglassesStatistics();
+    this.nodes = new PuppetglassesNodes();
   }
 
   Puppetglasses.prototype.findNodes = function(request,response) {
@@ -184,7 +242,9 @@ var Puppetglasses = (function() {
     var self = this;
     $('#navbar_statistics').addClass('active');
     $('#navbar_resources').removeClass('active');
+    $('#navbar_nodes').removeClass('active');
     $("#puppetglasses_resources").hide();
+    $("#puppetglasses_nodes").hide();
     $("#puppetglasses_statistics").show(0,
       function() { self.statistics.run(); }
     );
@@ -192,9 +252,22 @@ var Puppetglasses = (function() {
 
   Puppetglasses.prototype.showResources = function() {
     $('#navbar_statistics').removeClass('active');
+    $('#navbar_nodes').removeClass('active');
     $('#navbar_resources').addClass('active');
     $("#puppetglasses_resources").show();
     $("#puppetglasses_statistics").hide();
+    $("#puppetglasses_nodes").hide();
+  };
+
+  Puppetglasses.prototype.showNodes = function(active) {
+    var self = this;
+    $('#navbar_statistics').removeClass('active');
+    $('#navbar_resources').removeClass('active');
+    $('#navbar_nodes').addClass('active');
+    $("#puppetglasses_resources").hide();
+    $("#puppetglasses_statistics").hide();
+    $("#puppetglasses_nodes").show(0,
+       function() { self.nodes.run(active); } );
   };
 
   function parseNodes(data, response) {
@@ -248,6 +321,9 @@ $(document).ready(function () {
 
   $("#navbar_statistics").click( function() { puppetglasses.showStatistics(); });
   $("#navbar_resources").click( function() { puppetglasses.showResources(); });
+
+  $("#navbar_active_nodes").click( function() { puppetglasses.showNodes(true); });
+  $("#navbar_stale_nodes").click( function() { puppetglasses.showNodes(false); });
 
   $("#resources").hide();
   $("#puppetglasses_statistics").hide();

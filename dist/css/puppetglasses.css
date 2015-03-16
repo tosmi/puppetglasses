@@ -5,6 +5,10 @@ body {
   padding-top: 30px;
 }
 
-.table-nonfluid {
-   width: auto !important;
+#puppetglasses_statistics {
+  display: none;
+}
+
+#puppetglasses_nodes {
+  display: none;
 }

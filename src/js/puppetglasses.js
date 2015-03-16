@@ -4,6 +4,7 @@ var Puppetglasses = (function() {
   function Puppetglasses() {
     this.config = puppetglassesConfig;
     this.statistics = new PuppetglassesStatistics();
+    this.nodes = new PuppetglassesNodes();
   }
 
   Puppetglasses.prototype.findNodes = function(request,response) {
@@ -44,7 +45,9 @@ var Puppetglasses = (function() {
     var self = this;
     $('#navbar_statistics').addClass('active');
     $('#navbar_resources').removeClass('active');
+    $('#navbar_nodes').removeClass('active');
     $("#puppetglasses_resources").hide();
+    $("#puppetglasses_nodes").hide();
     $("#puppetglasses_statistics").show(0,
       function() { self.statistics.run(); }
     );
@@ -52,9 +55,22 @@ var Puppetglasses = (function() {
 
   Puppetglasses.prototype.showResources = function() {
     $('#navbar_statistics').removeClass('active');
+    $('#navbar_nodes').removeClass('active');
     $('#navbar_resources').addClass('active');
     $("#puppetglasses_resources").show();
     $("#puppetglasses_statistics").hide();
+    $("#puppetglasses_nodes").hide();
+  };
+
+  Puppetglasses.prototype.showNodes = function(active) {
+    var self = this;
+    $('#navbar_statistics').removeClass('active');
+    $('#navbar_resources').removeClass('active');
+    $('#navbar_nodes').addClass('active');
+    $("#puppetglasses_resources").hide();
+    $("#puppetglasses_statistics").hide();
+    $("#puppetglasses_nodes").show(0,
+       function() { self.nodes.run(active); } );
   };
 
   function parseNodes(data, response) {
@@ -108,6 +124,9 @@ $(document).ready(function () {
 
   $("#navbar_statistics").click( function() { puppetglasses.showStatistics(); });
   $("#navbar_resources").click( function() { puppetglasses.showResources(); });
+
+  $("#navbar_active_nodes").click( function() { puppetglasses.showNodes(true); });
+  $("#navbar_stale_nodes").click( function() { puppetglasses.showNodes(false); });
 
   $("#resources").hide();
   $("#puppetglasses_statistics").hide();
