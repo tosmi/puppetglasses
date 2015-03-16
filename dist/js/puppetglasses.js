@@ -78,7 +78,7 @@ var PuppetglassesStatistics = (function() {
       ];
 
       var ctx = $("#node_chart").get(0).getContext("2d");
-      new Chart(ctx).Doughnut(data);
+      var nodeChart = new Chart(ctx).Doughnut(data);
     };
 
     this.updateNodeMetrics = function () {
